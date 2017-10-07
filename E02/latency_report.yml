@@ -1,0 +1,38 @@
+---
+
+- name: "PB Name"
+  hosts: all
+  connection: local
+  gather_facts: no
+  tasks:
+  - name: "Get list of hosts"
+    set_fact:
+      hosts_list: "{{ ansible_play_batch | join(' ') }}"
+    when: hosts_list is not defined    
+    run_once: true
+  - name: "Get variable from python script"
+    command: ./build_map.py {{ hosts_list }}
+    delegate_to: 127.0.0.1
+    register: mivar
+    when: map_dict is not defined
+    run_once: true
+  - name: "assign value to var"
+    set_fact:
+      map_dict: "{{ mivar.stdout | from_json }}"
+    when: map_dict is not defined
+  - name: "Ping targets"
+    ios_command:
+      commands: "ping {{ item }}"
+      timeout:  3
+      retries:  1
+      wait_for:
+      - result[0] contains "!!!"
+      provider:
+        username:  "{{ ansible_user }}"
+        password:  "{{ ansible_ssh_pass }}"
+        host:      "{{ inventory_hostname }}"
+        transport: cli
+    with_items: "{{ map_dict[inventory_hostname] }}"
+    when: map_dict[inventory_hostname]|length > 0
+    register: result
+    ignore_errors: yes
