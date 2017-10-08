@@ -4,22 +4,27 @@
   hosts: all
   connection: local
   gather_facts: no
+  vars:
+  - results: results
   tasks:
-  - name: "Get list of hosts"
+  - name: "Get list of hosts and give format"
     set_fact:
       hosts_list: "{{ ansible_play_batch | join(' ') }}"
-    when: hosts_list is not defined    
+    when: hosts_list is not defined
     run_once: true
-  - name: "Get variable from python script"
+  - name: "Get hosts map from python script"
     command: ./build_map.py {{ hosts_list }}
     delegate_to: 127.0.0.1
     register: mivar
     when: map_dict is not defined
     run_once: true
-  - name: "assign value to var"
+  - name: "Assign script's result to local dictionary var"
     set_fact:
       map_dict: "{{ mivar.stdout | from_json }}"
     when: map_dict is not defined
+  - name: "Define results' folder"
+    file: path={{ results }} state=directory
+    run_once: true
   - name: "Ping targets"
     ios_command:
       commands: "ping {{ item }}"
@@ -27,12 +32,13 @@
       retries:  1
       wait_for:
       - result[0] contains "!!!"
-      provider:
-        username:  "{{ ansible_user }}"
-        password:  "{{ ansible_ssh_pass }}"
-        host:      "{{ inventory_hostname }}"
-        transport: cli
+      provider: "{{ cli }}"
     with_items: "{{ map_dict[inventory_hostname] }}"
     when: map_dict[inventory_hostname]|length > 0
-    register: result
+    register: r
     ignore_errors: yes
+  - name: "Save results to files"
+    lineinfile:
+      line:  "{{ item }}"
+      path:     "{{ results }}/{{inventory_hostname}}.txt"
+    with_items: "{{ r.results }}"
