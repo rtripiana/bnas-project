@@ -10,7 +10,7 @@
   - name: "Get list of hosts and give format"
     set_fact:
       hosts_list: "{{ ansible_play_batch | join(' ') }}"
-    when: hosts_list is not defined
+    when: hosts_list is not defined    
     run_once: true
   - name: "Get hosts map from python script"
     command: ./build_map.py {{ hosts_list }}
@@ -25,10 +25,12 @@
   - name: "Define results' folder"
     file: path={{ results }} state=directory
     run_once: true
+  - name:
+    file: path={{ results }}/{{ansible_host}}.txt state=touch
   - name: "Ping targets"
     ios_command:
       commands: "ping {{ item }}"
-      timeout:  3
+      timeout:  2
       retries:  1
       wait_for:
       - result[0] contains "!!!"
@@ -37,8 +39,8 @@
     when: map_dict[inventory_hostname]|length > 0
     register: r
     ignore_errors: yes
-  - name: "Save results to files"
+  - name: "Parse and save results to files"
     lineinfile:
-      line:  "{{ item }}"
-      path:     "{{ results }}/{{inventory_hostname}}.txt"
+      line:  "DST:{{ item.item }} RTT:{{ item.stdout_lines[0][3].split('round-trip')[1] }}"
+      path:     "{{ results }}/{{ ansible_host }}.txt"
     with_items: "{{ r.results }}"
