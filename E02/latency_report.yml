@@ -26,7 +26,7 @@
     file: path={{ results }} state=directory
     run_once: true
   - name:
-    file: path={{ results }}/{{ansible_host}}.txt state=touch
+    file: path={{ results }}/{{ ansible_host|default(inventory_hostname) }}.txt state=touch
   - name: "Ping targets"
     ios_command:
       commands: "ping {{ item }}"
@@ -42,5 +42,5 @@
   - name: "Parse and save results to files"
     lineinfile:
       line:  "DST:{{ item.item }} RTT:{{ item.stdout_lines[0][3].split('round-trip')[1] }}"
-      path:     "{{ results }}/{{ ansible_host }}.txt"
+      path:     "{{ results }}/{{ ansible_host|default(inventory_hostname) }}.txt"
     with_items: "{{ r.results }}"
