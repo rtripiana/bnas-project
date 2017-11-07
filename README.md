@@ -25,3 +25,24 @@ H4: [H5]
 It is assumed that there is the target Ansible's hosts file includes an alias named "ansible_host"
 
 So far only supported for Cisco IOS devices
+
+## Folder E03
+Hands-on exercise for week3. Build data model and generate de ice configurations. Is based on "MPLS-infrastructure" example from ipspace. Starting from a fabric definition for a WAN cloud (that consists on few Leaf sites connected via point-to-point links to a Hub site) the playbooks extract per-nodes data and creates both generic and BGP configs.
+- **fabric.yml**
+WAN cloud data model
+- **create-data-model.yml**
+Playbook that extracts per-node data to "nodes.yml"
+- **models/nodes.j2**
+Nodes' data template
+- **generic/gen_config.j2**
+Generic configuration's template
+- **generic/config_gen.yml**
+Playbook that generates per node's generic configuration file
+- **generic/deploy.yml**
+Playbook that calls the configuration templates generations and in future will also call configuration push and test
+- **bgp/bgp_config.j2**
+BGP configuration's template 
+- **bgp/config_bgp.yml**
+Playbook that generates per node's BGP configuration file
+- **bgp/deploy.yml**
+Playbook that calls the configuration templates generations and in future will also call configuration push and test
