@@ -1,0 +1,92 @@
+{#
+macro that creates the dic of links
+#}
+{% macro internal_link(name,ip,cost,use,peer) %}
+{{ name }}: { ip: {{ip}} {% if cost %}, cost: {{cost}}{% endif %}, use: {{use}}, peer: {{peer}} }{% endmacro %}
+{#
+macro that creates the dic of ibgp peers
+#}
+{% macro ibgp_session(from,to,ip) %}
+{% if from != to %}
+- { peer_name: {{to}}, ip: "{{ip}}" }{% endif %}{% endmacro %}
+{#
+macro that creates the dic of ebgp peers
+#}
+{% macro ebgp_session(from,to,as,ip) %}
+{% if from != to %}
+- { peer_name: {{to}}, as: {{as}}, ip: "{{ip}}" }{% endif %}{% endmacro %}
+
+---
+common:
+{% for k,v in common.iteritems() %}
+  {{ k }}: {{ v }}
+{% endfor %}
+{#
+data extract per node
+#}
+nodes:
+{% for node in nodes %}
+
+  {{ node.name }}:
+    rid:  {{ node.rid }}
+{#
+    Create IBGP information:
+    * Find ASN that has current node name as one of its members
+    * Create AS variable
+    * Create a list of IBGP sessions
+
+    IBGP sessions are established between RRs and all other
+    nodes in the AS
+#}
+{%   for k,v in asn|dictsort() %}   {# iterate through dict's k,v pair #}
+{%     if node.name in v.members %}
+    as:   {{ k }}
+    community: {{ v.community }}
+{%       if v.leaf == false %}
+    role: hub
+{%       else %}
+    role: leaf
+{%       endif %}
+{%       if node.name in v.rr %}
+    rr:   yes
+{%       endif %}
+
+{%       if v.leaf == false %} {# only if it is a Hub device, create the ibgp dict #}
+    ibgp:
+{%       endif %}
+{%       if node.name in v.rr %}
+{%         for rid in v.members %}
+{%           set neighbor = nodes|selectattr('name','equalto',rid)|first %}
+      {{ibgp_session(node.name,rid,neighbor.rid)}}
+{%         endfor %}
+{%       else %}
+{%         for rid in v.rr %}
+{%           set neighbor = nodes|selectattr('name','equalto',rid)|first %}
+      {{ibgp_session(node.name,rid,neighbor.rid)}}
+{%         endfor %}
+{%       endif %}
+{%     endif %}
+{%   endfor %}
+
+{%   for p in ebgp if (p.left == node.name or p.right == node.name) %} {# only if there are ebgp peers, create the dict #}
+{%     if loop.first %}
+    ebgp:
+{%     endif %}
+{%   endfor %}
+{%   for p in ebgp %}
+{%     if p.left == node.name %}
+      {{ ebgp_session(node.name,p.right,p.right_as,p.right_ip) }}
+{%     elif p.right == node.name %}
+      {{ ebgp_session(node.name,p.left,p.left_as,p.left_ip) }}
+{%     endif %}
+{%   endfor %}
+
+    interfaces: 
+{%   for link in fabric %}
+{%     if link.left == node.name %}
+      {{ internal_link(link.left_port,link.left_ip,link.cost|default(''),link.use,link.right) }}
+{%     elif link.right == node.name %}
+      {{ internal_link(link.right_port,link.right_ip, link.cost|default(''),link.use,link.left) }}
+{%     endif %}
+{%   endfor %}
+{% endfor %}

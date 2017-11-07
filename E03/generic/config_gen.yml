@@ -1,0 +1,17 @@
+#
+# Build generic configs in a WAN fabric
+#
+---
+- name: Create configuration directory
+  local_action: file path={{configs}} state=directory
+  run_once: true
+  check_mode: no
+  changed_when: no
+  tags: [ configs ]
+
+- name: Create configurations
+  delegate_to: localhost
+  template: src=gen_config.j2 dest={{configs}}/{{inventory_hostname}}.gen.cfg
+  check_mode: no
+  changed_when: no
+  tags: [ configs ]

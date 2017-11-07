@@ -1,0 +1,18 @@
+#
+# Build generic configs in a WAN fabric
+#
+---
+- name: Create generic configurations
+  hosts: all
+  connection: local
+  gather_facts: no
+  vars:
+    configs: "{{inventory_dir}}/configs"
+  tasks:
+  - include_vars: "{{ item }}"
+    with_first_found:
+      - nodes.yml
+      - "{{ inventory_dir }}/nodes.yml"
+    tags: [ configs ]
+  - include: config_gen.yml
+    tags: [ configs ]
