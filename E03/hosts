@@ -23,8 +23,8 @@ SW31
 SW32
 
 [all:vars]
-ansible_user=cisco
+ansible_user=netlab
 #ansible_connection=local
-ansible_ssh_pass=cisco
-snmp_community=cisco
+ansible_ssh_pass=netlab
+snmp_community=netlab
 os=ios
