@@ -1,0 +1,10 @@
+#
+# Config generic configs in a WAN fabric
+#
+---
+- name: deploy config in the device
+  netconf_config:
+ #   host: 10.0.0.1
+ #   username: netlab
+ #   password: netlab
+    source: "{{configs}}/{{inventory_hostname}}.gen-nc.xml"

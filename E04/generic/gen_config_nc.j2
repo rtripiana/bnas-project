@@ -1,0 +1,12 @@
+{% set node = nodes[inventory_hostname] %}
+
+ip cef
+
+{% for port,param in node.interfaces.iteritems() %}
+
+interface {{ port }}
+ ip address {{ param.ip }} {{ "255.255.255.252" if param.use.startswith("WAN") else "255.255.255.248" }}
+ description TO_{{ param.peer }}
+ {{ "bfd interval 50 min_rx 50 multiplier 5" if param.use.startswith("WAN") else "" }}
+
+{% endfor %}

@@ -1,0 +1,148 @@
+#
+# WAN Fabric definition
+#
+---
+common:
+  os: ios
+  domain: bnas.edu
+  regional_as: 65100
+  peer_range: 145.245.0.0/16
+
+nodes:
+  - name: L11
+    rid:  145.245.0.11
+  - name: L12
+    rid:  145.245.0.12
+  - name: L21
+    rid:  145.245.0.21
+  - name: L22
+    rid:  145.245.0.22
+  - name: L31
+    rid:  145.245.0.31
+  - name: L32
+    rid:  145.245.0.32
+  - name: H1
+    rid:  145.245.0.1
+  - name: H2
+    rid:  145.245.0.2
+  - name: LC1
+    rid:  145.245.0.3
+  - name: LC2
+    rid:  145.245.0.4
+  - name: SW11
+    rid:  145.245.0.13
+  - name: SW12
+    rid:  145.245.0.14
+  - name: SW21
+    rid:  145.245.0.23
+  - name: SW22
+    rid:  145.245.0.24
+  - name: SW31
+    rid:  145.245.0.33
+  - name: SW32
+    rid:  145.245.0.34
+
+
+fabric:
+  - {left: H1, left_ip: 145.245.51.1, left_port: GigabitEthernet1/1, 
+     right: L11, right_ip: 145.245.51.2, right_port: GigabitEthernet1/0,
+     cost: 5, use: WAN }
+  - {left: H2, left_ip: 145.245.52.1, left_port: GigabitEthernet1/1,
+     right: L12, right_ip: 145.245.52.2, right_port: GigabitEthernet1/0,
+     cost: 5, use: WAN }
+  - {left: H1, left_ip: 145.245.51.5, left_port: GigabitEthernet1/2,
+     right: L21, right_ip: 145.245.51.6, right_port: GigabitEthernet1/0,
+     cost: 5, use: WAN }
+  - {left: H2, left_ip: 145.245.52.5, left_port: GigabitEthernet1/2,
+     right: L22, right_ip: 145.245.52.6, right_port: GigabitEthernet1/0,
+     cost: 5, use: WAN }
+  - {left: H1, left_ip: 145.245.51.9, left_port: GigabitEthernet1/3,
+     right: L31, right_ip: 145.245.51.10, right_port: GigabitEthernet1/0,
+     cost: 5, use: WAN }
+  - {left: H2, left_ip: 145.245.52.9, left_port: GigabitEthernet1/3,
+     right: L32, right_ip: 145.245.52.10, right_port: GigabitEthernet1/0,
+     cost: 5, use: WAN }
+  - {left: H1, left_ip: 145.245.50.1, left_port: GigabitEthernet0/0,
+     right: LC1, right_ip: 145.245.50.2, right_port: GigabitEthernet0/0,
+     cost: 5, use: LAN }
+  - {left: H1, left_ip: 145.245.50.5, left_port: GigabitEthernet0/1,
+     right: LC2, right_ip: 145.245.50.6, right_port: GigabitEthernet0/0,
+     cost: 5, use: LAN }
+  - {left: H2, left_ip: 145.245.50.9, left_port: GigabitEthernet0/0,
+     right: LC1, right_ip: 145.245.50.10, right_port: GigabitEthernet0/1,
+     cost: 5, use: LAN }
+  - {left: H2, left_ip: 145.245.50.13, left_port: GigabitEthernet0/1,
+     right: LC2, right_ip: 145.245.50.14, right_port: GigabitEthernet0/1,
+     cost: 5, use: LAN }
+  - {left: L11, left_ip: 145.245.11.1, left_port: GigabitEthernet0/0,
+     right: SW11, right_ip: 145.245.11.2, right_port: GigabitEthernet0/0,
+     cost: 5, use: LAN }
+  - {left: L11, left_ip: 145.245.11.5, left_port: GigabitEthernet0/1,
+     right: SW12, right_ip: 145.245.11.6, right_port: GigabitEthernet0/0,
+     cost: 5, use: LAN }
+  - {left: L12, left_ip: 145.245.11.9, left_port: GigabitEthernet0/0,
+     right: SW11, right_ip: 145.245.11.10, right_port: GigabitEthernet0/1,
+     cost: 5, use: LAN }
+  - {left: L12, left_ip: 145.245.11.13, left_port: GigabitEthernet0/1,
+     right: SW12, right_ip: 145.245.11.14, right_port: GigabitEthernet0/1,
+     cost: 5, use: LAN }
+  - {left: L21, left_ip: 145.245.21.1, left_port: GigabitEthernet0/0,
+     right: SW21, right_ip: 145.245.21.2, right_port: GigabitEthernet0/0,
+     cost: 5, use: LAN }
+  - {left: L21, left_ip: 145.245.21.5, left_port: GigabitEthernet0/1,
+     right: SW22, right_ip: 145.245.21.6, right_port: GigabitEthernet0/0,
+     cost: 5, use: LAN }
+  - {left: L22, left_ip: 145.245.21.9, left_port: GigabitEthernet0/0,
+     right: SW21, right_ip: 145.245.21.10, right_port: GigabitEthernet0/1,
+     cost: 5, use: LAN }
+  - {left: L22, left_ip: 145.245.21.13, left_port: GigabitEthernet0/1,
+     right: SW22, right_ip: 145.245.21.14, right_port: GigabitEthernet0/1,
+     cost: 5, use: LAN }
+  - {left: L31, left_ip: 145.245.31.1, left_port: GigabitEthernet0/0,
+     right: SW31, right_ip: 145.245.31.2, right_port: GigabitEthernet0/0,
+     cost: 5, use: LAN }
+  - {left: L31, left_ip: 145.245.31.5, left_port: GigabitEthernet0/1,
+     right: SW32, right_ip: 145.245.31.6, right_port: GigabitEthernet0/0,
+     cost: 5, use: LAN }
+  - {left: L32, left_ip: 145.245.31.9, left_port: GigabitEthernet0/0,
+     right: SW31, right_ip: 145.245.31.10, right_port: GigabitEthernet0/1,
+     cost: 5, use: LAN }
+  - {left: L32, left_ip: 145.245.31.13, left_port: GigabitEthernet0/1,
+     right: SW32, right_ip: 145.245.31.14, right_port: GigabitEthernet0/1,
+     cost: 5, use: LAN }
+
+ebgp:
+  - {left: H1, left_as: '65000', left_ip: 145.245.51.1, 
+     right: L11, right_as: '65001', right_ip: 145.245.51.2}
+  - {left: H2, left_as: '65000', left_ip: 145.245.52.1, 
+     right: L12, right_as: '65001', right_ip: 145.245.52.2}
+  - {left: H1, left_as: '65000', left_ip: 145.245.51.5, 
+     right: L21, right_as: '65002', right_ip: 145.245.51.6}
+  - {left: H2, left_as: '65000', left_ip: 145.245.52.5, 
+     right: L22, right_as: '65002', right_ip: 145.245.52.6}
+  - {left: H1, left_as: '65000', left_ip: 145.245.51.9, 
+     right: L31, right_as: '65003', right_ip: 145.245.51.10}
+  - {left: H2, left_as: '65000', left_ip: 145.245.52.9, 
+     right: L32, right_as: '65003', right_ip: 145.245.52.10}
+
+asn:
+  65000: 
+    members: [ H1,H2,LC1,LC2 ]
+    rr:      [ LC1,LC2 ]
+    community: 33000
+    leaf: false
+  65001: 
+    members: [ L11,L12,SW11,SW12 ]
+    rr:      []
+    community: 33001
+    leaf: true
+  65002: 
+    members: [ L21,L22,SW21,SW22 ]
+    rr:      []
+    community: 33002
+    leaf: true
+  65003: 
+    members: [ L31,L32,SW31,SW32 ]
+    rr:      []
+    community: 33003
+    leaf: true
