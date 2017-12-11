@@ -17,4 +17,3 @@
   - include: config_gen_nc.yml
     tags: [ configs ]
   - include: deploy_gen_nc.yml
-    tags: [ configs ]

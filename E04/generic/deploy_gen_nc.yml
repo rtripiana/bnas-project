@@ -4,7 +4,7 @@
 ---
 - name: deploy config in the device
   netconf_config:
- #   host: 10.0.0.1
- #   username: netlab
- #   password: netlab
-    source: "{{configs}}/{{inventory_hostname}}.gen-nc.xml"
+    host: "{{ansible_host}}"
+    username: "{{ansible_user}}"
+    password: "{{ansible_ssh_pass}}"
+    src: "{{configs}}/{{inventory_hostname}}.gen-nc.xml"

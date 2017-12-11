@@ -15,12 +15,11 @@ nodes:
 
 
     ebgp:
+
       - { peer_name: H1, as: 65000, ip: "145.245.51.1" }
 
     interfaces: 
-      GigabitEthernet1/0: { ip: 145.245.51.2 , cost: 5, use: WAN, peer: H1 }
-      GigabitEthernet0/0: { ip: 145.245.11.1 , cost: 5, use: LAN, peer: SW11 }
-      GigabitEthernet0/1: { ip: 145.245.11.5 , cost: 5, use: LAN, peer: SW12 }
+      GigabitEthernet1: { ip: 145.245.51.2 , cost: 5, use: WAN, peer: H1 }
 
   L12:
     rid:  145.245.0.12
@@ -30,12 +29,11 @@ nodes:
 
 
     ebgp:
+
       - { peer_name: H2, as: 65000, ip: "145.245.52.1" }
 
     interfaces: 
-      GigabitEthernet1/0: { ip: 145.245.52.2 , cost: 5, use: WAN, peer: H2 }
-      GigabitEthernet0/0: { ip: 145.245.11.9 , cost: 5, use: LAN, peer: SW11 }
-      GigabitEthernet0/1: { ip: 145.245.11.13 , cost: 5, use: LAN, peer: SW12 }
+      GigabitEthernet1: { ip: 145.245.52.2 , cost: 5, use: WAN, peer: H2 }
 
   L21:
     rid:  145.245.0.21
@@ -45,12 +43,11 @@ nodes:
 
 
     ebgp:
+
       - { peer_name: H1, as: 65000, ip: "145.245.51.5" }
 
     interfaces: 
-      GigabitEthernet1/0: { ip: 145.245.51.6 , cost: 5, use: WAN, peer: H1 }
-      GigabitEthernet0/0: { ip: 145.245.21.1 , cost: 5, use: LAN, peer: SW21 }
-      GigabitEthernet0/1: { ip: 145.245.21.5 , cost: 5, use: LAN, peer: SW22 }
+      GigabitEthernet1: { ip: 145.245.51.6 , cost: 5, use: WAN, peer: H1 }
 
   L22:
     rid:  145.245.0.22
@@ -60,42 +57,11 @@ nodes:
 
 
     ebgp:
+
       - { peer_name: H2, as: 65000, ip: "145.245.52.5" }
 
     interfaces: 
-      GigabitEthernet1/0: { ip: 145.245.52.6 , cost: 5, use: WAN, peer: H2 }
-      GigabitEthernet0/0: { ip: 145.245.21.9 , cost: 5, use: LAN, peer: SW21 }
-      GigabitEthernet0/1: { ip: 145.245.21.13 , cost: 5, use: LAN, peer: SW22 }
-
-  L31:
-    rid:  145.245.0.31
-    as:   65003
-    community: 33003
-    role: leaf
-
-
-    ebgp:
-      - { peer_name: H1, as: 65000, ip: "145.245.51.9" }
-
-    interfaces: 
-      GigabitEthernet1/0: { ip: 145.245.51.10 , cost: 5, use: WAN, peer: H1 }
-      GigabitEthernet0/0: { ip: 145.245.31.1 , cost: 5, use: LAN, peer: SW31 }
-      GigabitEthernet0/1: { ip: 145.245.31.5 , cost: 5, use: LAN, peer: SW32 }
-
-  L32:
-    rid:  145.245.0.32
-    as:   65003
-    community: 33003
-    role: leaf
-
-
-    ebgp:
-      - { peer_name: H2, as: 65000, ip: "145.245.52.9" }
-
-    interfaces: 
-      GigabitEthernet1/0: { ip: 145.245.52.10 , cost: 5, use: WAN, peer: H2 }
-      GigabitEthernet0/0: { ip: 145.245.31.9 , cost: 5, use: LAN, peer: SW31 }
-      GigabitEthernet0/1: { ip: 145.245.31.13 , cost: 5, use: LAN, peer: SW32 }
+      GigabitEthernet1: { ip: 145.245.52.6 , cost: 5, use: WAN, peer: H2 }
 
   H1:
     rid:  145.245.0.1
@@ -104,20 +70,15 @@ nodes:
     role: hub
 
     ibgp:
-      - { peer_name: LC1, ip: "145.245.0.3" }
-      - { peer_name: LC2, ip: "145.245.0.4" }
 
     ebgp:
+
       - { peer_name: L11, as: 65001, ip: "145.245.51.2" }
       - { peer_name: L21, as: 65002, ip: "145.245.51.6" }
-      - { peer_name: L31, as: 65003, ip: "145.245.51.10" }
 
     interfaces: 
-      GigabitEthernet1/1: { ip: 145.245.51.1 , cost: 5, use: WAN, peer: L11 }
-      GigabitEthernet1/2: { ip: 145.245.51.5 , cost: 5, use: WAN, peer: L21 }
-      GigabitEthernet1/3: { ip: 145.245.51.9 , cost: 5, use: WAN, peer: L31 }
-      GigabitEthernet0/0: { ip: 145.245.50.1 , cost: 5, use: LAN, peer: LC1 }
-      GigabitEthernet0/1: { ip: 145.245.50.5 , cost: 5, use: LAN, peer: LC2 }
+      GigabitEthernet1: { ip: 145.245.51.1 , cost: 5, use: WAN, peer: L11 }
+      GigabitEthernet2: { ip: 145.245.51.5 , cost: 5, use: WAN, peer: L21 }
 
   H2:
     rid:  145.245.0.2
@@ -126,125 +87,12 @@ nodes:
     role: hub
 
     ibgp:
-      - { peer_name: LC1, ip: "145.245.0.3" }
-      - { peer_name: LC2, ip: "145.245.0.4" }
 
     ebgp:
+
       - { peer_name: L12, as: 65001, ip: "145.245.52.2" }
       - { peer_name: L22, as: 65002, ip: "145.245.52.6" }
-      - { peer_name: L32, as: 65003, ip: "145.245.52.10" }
 
     interfaces: 
-      GigabitEthernet1/1: { ip: 145.245.52.1 , cost: 5, use: WAN, peer: L12 }
-      GigabitEthernet1/2: { ip: 145.245.52.5 , cost: 5, use: WAN, peer: L22 }
-      GigabitEthernet1/3: { ip: 145.245.52.9 , cost: 5, use: WAN, peer: L32 }
-      GigabitEthernet0/0: { ip: 145.245.50.9 , cost: 5, use: LAN, peer: LC1 }
-      GigabitEthernet0/1: { ip: 145.245.50.13 , cost: 5, use: LAN, peer: LC2 }
-
-  LC1:
-    rid:  145.245.0.3
-    as:   65000
-    community: 33000
-    role: hub
-    rr:   yes
-
-    ibgp:
-      - { peer_name: H1, ip: "145.245.0.1" }
-      - { peer_name: H2, ip: "145.245.0.2" }
-      
-      - { peer_name: LC2, ip: "145.245.0.4" }
-
-
-    interfaces: 
-      GigabitEthernet0/0: { ip: 145.245.50.2 , cost: 5, use: LAN, peer: H1 }
-      GigabitEthernet0/1: { ip: 145.245.50.10 , cost: 5, use: LAN, peer: H2 }
-
-  LC2:
-    rid:  145.245.0.4
-    as:   65000
-    community: 33000
-    role: hub
-    rr:   yes
-
-    ibgp:
-      - { peer_name: H1, ip: "145.245.0.1" }
-      - { peer_name: H2, ip: "145.245.0.2" }
-      - { peer_name: LC1, ip: "145.245.0.3" }
-      
-
-
-    interfaces: 
-      GigabitEthernet0/0: { ip: 145.245.50.6 , cost: 5, use: LAN, peer: H1 }
-      GigabitEthernet0/1: { ip: 145.245.50.14 , cost: 5, use: LAN, peer: H2 }
-
-  SW11:
-    rid:  145.245.0.13
-    as:   65001
-    community: 33001
-    role: leaf
-
-
-
-    interfaces: 
-      GigabitEthernet0/0: { ip: 145.245.11.2 , cost: 5, use: LAN, peer: L11 }
-      GigabitEthernet0/1: { ip: 145.245.11.10 , cost: 5, use: LAN, peer: L12 }
-
-  SW12:
-    rid:  145.245.0.14
-    as:   65001
-    community: 33001
-    role: leaf
-
-
-
-    interfaces: 
-      GigabitEthernet0/0: { ip: 145.245.11.6 , cost: 5, use: LAN, peer: L11 }
-      GigabitEthernet0/1: { ip: 145.245.11.14 , cost: 5, use: LAN, peer: L12 }
-
-  SW21:
-    rid:  145.245.0.23
-    as:   65002
-    community: 33002
-    role: leaf
-
-
-
-    interfaces: 
-      GigabitEthernet0/0: { ip: 145.245.21.2 , cost: 5, use: LAN, peer: L21 }
-      GigabitEthernet0/1: { ip: 145.245.21.10 , cost: 5, use: LAN, peer: L22 }
-
-  SW22:
-    rid:  145.245.0.24
-    as:   65002
-    community: 33002
-    role: leaf
-
-
-
-    interfaces: 
-      GigabitEthernet0/0: { ip: 145.245.21.6 , cost: 5, use: LAN, peer: L21 }
-      GigabitEthernet0/1: { ip: 145.245.21.14 , cost: 5, use: LAN, peer: L22 }
-
-  SW31:
-    rid:  145.245.0.33
-    as:   65003
-    community: 33003
-    role: leaf
-
-
-
-    interfaces: 
-      GigabitEthernet0/0: { ip: 145.245.31.2 , cost: 5, use: LAN, peer: L31 }
-      GigabitEthernet0/1: { ip: 145.245.31.10 , cost: 5, use: LAN, peer: L32 }
-
-  SW32:
-    rid:  145.245.0.34
-    as:   65003
-    community: 33003
-    role: leaf
-
-
-
-    interfaces: 
-      GigabitEthernet0/0: { ip: 145.245.31.6 , cost: 5, use: LAN, peer: L31 }
-      GigabitEthernet0/1: { ip: 145.245.31.14 , cost: 5, use: LAN, peer: L32 }
+      GigabitEthernet1: { ip: 145.245.52.1 , cost: 5, use: WAN, peer: L12 }
+      GigabitEthernet2: { ip: 145.245.52.5 , cost: 5, use: WAN, peer: L22 }
