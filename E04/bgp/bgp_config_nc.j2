@@ -1,0 +1,154 @@
+{% set node = nodes[inventory_hostname] %}
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+{% if node.role == 'leaf' %}
+        <route-map xmlns:ios-route-map="http://cisco.com/ns/yang/Cisco-IOS-XE-route-map">
+          <name>LOCAL_ONLY</name>
+          <ios-route-map:route-map-seq>
+            <ios-route-map:ordering-seq>10</ios-route-map:ordering-seq>
+            <ios-route-map:operation>deny</ios-route-map:operation>
+            <ios-route-map:description>description Drop BGP routes yet injected into IGP</ios-route-map:description>
+            <ios-route-map:match>
+              <ios-route-map:tag>
+                <ios-route-map:tag_value>2047</ios-route-map:tag_value>
+              </ios-route-map:tag>
+            </ios-route-map:match>
+          </ios-route-map:route-map-seq>
+          <ios-route-map:route-map-seq>
+            <ios-route-map:ordering-seq>20</ios-route-map:ordering-seq>
+            <ios-route-map:operation>permit</ios-route-map:operation>
+            <ios-route-map:set>
+              <ios-route-map:community>
+                <ios-route-map:community-well-known>
+                  <ios-route-map:community-list>2047:{{ node.community }}</ios-route-map:community-list>
+                </ios-route-map:community-well-known>
+              </ios-route-map:community>
+              <ios-route-map:metric>0</ios-route-map:metric>
+            </ios-route-map:set>
+          </ios-route-map:route-map-seq>
+        </route-map>
+{% endif  %}
+      <ip>
+        <bgp-community>
+          <new-format/>
+        </bgp-community>
+      </ip>
+      <router>
+        <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-bgp">
+          <id>{{ node.as }}</id>
+          <bgp>
+            <router-id>{{ node.rid }}</router-id>
+            <log-neighbor-changes/>
+{% if node.ebgp is defined %}
+{%   if node.role == 'hub' %}
+            <listen>
+              <range>
+                <network-range>145.245.0.0/16</network-range>
+                <peer-group>LEAF-SITES</peer-group>
+              </range>
+            </listen>
+          </bgp>
+          <neighbor>
+            <id>LEAF-SITES</id>
+            <peer-group/>
+            <remote-as>{{ common.regional_as }}</remote-as>
+            <description>LEAF-SITES</description>
+            <fall-over>
+              <bfd/>
+            </fall-over>
+          </neighbor>
+{%   else %}
+          </bgp>
+{%     for p in node.ebgp %}
+          <neighbor>
+            <id>{{ p.ip }}</id>
+            <remote-as>{{ p.as }}</remote-as>
+            <local-as>
+              <as-no>{{ common.regional_as }}</as-no>
+            </local-as>
+            <description>{{ p.peer_name }}</description>
+            <fall-over>
+              <bfd/>
+            </fall-over>
+          </neighbor>
+{%     endfor %}
+{%   endif %}
+{% endif %}
+{% if node.ibgp is defined %}
+          <neighbor>
+            <id>RR</id>
+            <peer-group/>
+            <remote-as>{{ node.as }}</remote-as>
+            <update-source>
+              <Loopback>0</Loopback>
+            </update-source>
+          </neighbor>
+{%   for p in node.ibgp %}
+          <neighbor>
+            <id>{{ p.ip }}</id>
+            <peer-group>
+              <peer-group-name>RR</peer-group-name>
+            </peer-group>
+            <description>{{ p.peer_name }}</description>
+          </neighbor>
+{%   endfor %}
+{% endif %}
+          <address-family>
+            <no-vrf>
+              <ipv4>
+                <af-name>unicast</af-name>
+{% if node.ebgp is defined %}
+{%   if node.role == 'hub' %}
+                <neighbor>
+                  <id>LEAF-SITES</id>
+                  <activate/>
+                  <send-community>
+                    <send-community-where>both</send-community-where>
+                  </send-community>
+                  <soft-reconfiguration>inbound</soft-reconfiguration>
+                </neighbor>
+{%   else %}
+                <redistribute>
+                  <connected/>
+                  <ospf>
+                    <id>1</id>
+                    <non-vrf>
+                      <route-map>LOCAL_ONLY</route-map>
+                    </non-vrf>
+                  </ospf>
+                </redistribute>
+{%     for p in node.ebgp %}
+                <neighbor>
+                  <id>{{ p.ip }}</id>
+                  <activate/>
+                  <send-community>
+                    <send-community-where>both</send-community-where>
+                  </send-community>
+                  <soft-reconfiguration>inbound</soft-reconfiguration>
+                </neighbor>
+{%     endfor %}
+{%   endif %}
+{% endif %}
+{% if node.ibgp is defined %}
+                <neighbor>
+                  <id>RR</id>
+                  <route-reflector-client/>
+                  <send-community>
+                    <send-community-where>both</send-community-where>
+                  </send-community>
+                  <soft-reconfiguration>inbound</soft-reconfiguration>
+                </neighbor>
+{%   for p in node.ibgp %}
+                <neighbor>
+                  <id>{{ p.ip }}</id>
+                  <activate/>
+                </neighbor>
+{%   endfor %}
+{% endif %}
+              </ipv4>
+            </no-vrf>
+          </address-family>
+        </bgp>
+      </router>
+    </native>
+</config>
