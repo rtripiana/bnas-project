@@ -46,3 +46,11 @@ BGP configuration's template
 Playbook that generates per node's BGP configuration file
 - **bgp/deploy.yml**
 Playbook that calls the configuration templates generations and in future will also call configuration push and test
+
+## Folder E04
+Hands-on exercise for week4. Generate and push device configurations. It continues the exercise E03. It builds the configuration in XML format (according to differnet Yang modules) that is passed on to the Ansible's Netconf module. Tested with Cisco IOS XE 16.7.1. Some differences compared to E03:
+- **generic/gen_config_nc.j2**
+Generic configuration's template in XML format. Uses "ietf-interfaces" Yang module for generic features and "Cisco-IOS-XE-native" Yang module for BFD config.
+- **bgp/bgp_config.j2**
+BGP configuration's template in XML format. Use "Cisco-IOS-XE-native" Yang module for BGP and route-map configurations
+
