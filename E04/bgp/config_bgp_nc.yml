@@ -1,5 +1,5 @@
 #
-# Build configs for IBGP and EBGP routing in a WAN fabric
+# Build generic configs in a WAN fabric
 #
 ---
 - name: Create configuration directory
@@ -11,7 +11,7 @@
 
 - name: Create configurations
   delegate_to: localhost
-  template: src=bgp_config.j2 dest={{configs}}/{{inventory_hostname}}.bgp.cfg
+  template: src=bgp_config_nc.j2 dest={{configs}}/{{inventory_hostname}}.bgp-nc.xml
   check_mode: no
   changed_when: no
   tags: [ configs ]

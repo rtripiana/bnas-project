@@ -1,0 +1,23 @@
+<rpc message-id="101" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <edit-config>
+    <target>
+      <running/>
+    </target>
+    <config>
+      <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces" xmlns:ip="urn:ietf:params:xml:ns:yang:ietf-ip">
+        <interface>
+          <name>GigabitEthernet3</name>
+          <description xc:operation="create">Yang test 2</description>
+          <enabled>true</enabled>
+          <ip:ipv4>
+            <ip:address>
+              <ip:ip xc:operation="create">192.168.2.101</ip:ip>
+              <ip:prefix-length xc:operation="create">24</ip:prefix-length>
+              <ip:netmask xc:operation="create">255.255.255.0</ip:netmask>
+            </ip:address>
+          </ip:ipv4>
+        </interface>
+      </interfaces>
+    </config>
+  </edit-config>
+</rpc>

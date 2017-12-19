@@ -1,0 +1,24 @@
+<rpc message-id="101" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <edit-config>
+    <target>
+      <running/>
+    </target>
+    <config>
+      <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+        <interface>
+          <GigabitEthernet>
+            <name>3</name>
+            <description>PRUEBA</description>
+            <bfd>
+              <interval xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-bfd">
+                <msecs>50</msecs>
+                <min_rx>50</min_rx>
+                <multiplier>5</multiplier>
+              </interval>
+            </bfd>
+          </GigabitEthernet>
+        </interface>
+      </native>
+    </config>
+  </edit-config>
+</rpc>

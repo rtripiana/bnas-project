@@ -1,9 +1,9 @@
 #
-# Build configs for IBGP and EBGP routing in a WAN fabric
+# Build BGP configs in a WAN fabric
 #
 ---
-- name: Create BGP configurations
-  hosts: HUB-ROUTERS,LEAF-ROUTERS
+- name: Create & deploy generic configurations
+  hosts: all
   connection: local
   gather_facts: no
   vars:
@@ -14,5 +14,6 @@
       - nodes.yml
       - "{{ inventory_dir }}/nodes.yml"
     tags: [ configs ]
-  - include: config_bgp.yml
+  - include: config_bgp_nc.yml
     tags: [ configs ]
+  - include: deploy_bgp_nc.yml

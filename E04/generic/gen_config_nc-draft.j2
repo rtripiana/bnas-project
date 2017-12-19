@@ -1,0 +1,55 @@
+{% set node = nodes[inventory_hostname] %}
+
+<rpc message-id="101" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <edit-config>
+    <target>
+      <running/>
+    </target>
+    <config>
+      <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces" xmlns:ip="urn:ietf:params:xml:ns:yang:ietf-ip">
+{% for port,param in node.interfaces.iteritems() %}
+        <interface>
+          <name>{{ port }}</name>
+          <description xc:operation="create">TO_{{ param.peer }}</description>
+          <enabled>true</enabled>
+          <ip:ipv4>
+            <ip:address>
+              <ip:ip xc:operation="create">{{ param.ip }}</ip:ip>
+              <ip:prefix-length xc:operation="create">{{ "30" if param.use.startswith("WAN") else "29" }}</ip:prefix-length>
+              <ip:netmask xc:operation="create">{{ "255.255.255.252" if param.use.startswith("WAN") else "255.255.255.248" }}</ip:netmask>
+            </ip:address>
+          </ip:ipv4>
+        </interface>
+{% endfor %}
+      </interfaces>
+    </config>
+  </edit-config>
+</rpc>
+
+{% set node = nodes[inventory_hostname] %}
+
+ip cef
+
+{% for port,param in node.interfaces.iteritems() %}
+
+    <config>
+      <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+        <interface>
+          <GigabitEthernet>
+            <name>3</name>
+            <description>PRUEBA</description>
+            <bfd>
+              <interval xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-bfd">
+                <msecs>50</msecs>
+                <min_rx>50</min_rx>
+                <multiplier>5</multiplier>
+              </interval>
+            </bfd>
+          </GigabitEthernet>
+        </interface>
+      </native>
+    </config>
+
+ {{ "bfd interval 50 min_rx 50 multiplier 5" if param.use.startswith("WAN") else "" }}
+
+{% endfor %}
