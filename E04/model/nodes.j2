@@ -51,7 +51,7 @@ nodes:
     rr:   yes
 {%       endif %}
 
-{%       if v.leaf == false %} {# only if it is a Hub device, create the ibgp dict #}
+{%       if v.leaf == false and v.rr != [] %} {# only if it is a Hub device, create the ibgp dict #}
     ibgp:
 {%       endif %}
 {%       if node.name in v.rr %}

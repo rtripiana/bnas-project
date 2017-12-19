@@ -69,7 +69,6 @@ nodes:
     community: 33000
     role: hub
 
-    ibgp:
 
     ebgp:
 
@@ -86,7 +85,6 @@ nodes:
     community: 33000
     role: hub
 
-    ibgp:
 
     ebgp:
 
