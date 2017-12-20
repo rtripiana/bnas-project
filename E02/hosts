@@ -1,0 +1,9 @@
+10.120.4.138 ansible_host=h1
+10.120.4.139 ansible_host=h1
+10.120.4.140 ansible_host=h1
+10.120.4.141 ansible_host=h1
+
+[all:vars]
+ansible_user = netlab
+ansible_ssh_pass = netlab
+repository = Repo
