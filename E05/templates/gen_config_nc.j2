@@ -1,0 +1,37 @@
+{% set node = nodes[inventory_hostname] %}
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces" xmlns:ip="urn:ietf:params:xml:ns:yang:ietf-ip">
+{% for port,param in node.interfaces.iteritems() %}
+    <interface>
+      <name>{{ port }}</name>
+      <description xc:operation="create">TO_{{ param.peer }}</description>
+      <enabled>true</enabled>
+      <ip:ipv4>
+        <ip:address>
+          <ip:ip xc:operation="create">{{ param.ip }}</ip:ip>
+          <ip:prefix-length xc:operation="create">{{ "30" if param.use.startswith("WAN") else "29" }}</ip:prefix-length>
+          <ip:netmask xc:operation="create">{{ "255.255.255.252" if param.use.startswith("WAN") else "255.255.255.248" }}</ip:netmask>
+        </ip:address>
+      </ip:ipv4>
+    </interface>
+{% endfor %}
+  </interfaces>
+{% for port,param in node.interfaces.iteritems() %}
+{% if param.use.startswith("WAN") %}
+  <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+    <interface>
+      <{{port[:-1]}}>
+        <name>{{port[-1:]}}</name>
+        <bfd>
+          <interval xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-bfd">
+            <msecs>50</msecs>
+            <min_rx>50</min_rx>
+            <multiplier>5</multiplier>
+          </interval>
+        </bfd>
+      </{{port[:-1]}}>
+    </interface>
+  </native>
+{% endif %}
+{% endfor %}
+</config>

@@ -1,0 +1,7 @@
+<filter>
+  <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+    <ip/>
+    <route-map/>
+    <router/>
+  </native>
+</filter>

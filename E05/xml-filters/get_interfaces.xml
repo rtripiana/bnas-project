@@ -1,0 +1,7 @@
+<filter>
+  <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"/>
+  <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+    <bfd/>
+    <interface/>
+  </native>
+</filter>

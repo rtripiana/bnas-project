@@ -1,0 +1,64 @@
+#
+# Fabric definition
+#
+---
+common:
+  os: ios
+  domain: bnas.edu
+  regional_as: 65100
+  peer_range: 145.245.0.0/16
+
+nodes:
+  - name: L11
+    rid:  145.245.0.11
+  - name: L12
+    rid:  145.245.0.12
+  - name: L21
+    rid:  145.245.0.21
+  - name: L22
+    rid:  145.245.0.22
+  - name: H1
+    rid:  145.245.0.1
+  - name: H2
+    rid:  145.245.0.2
+
+fabric:
+  - {left: H1, left_ip: 145.245.51.1, left_port: GigabitEthernet1,
+     right: L11, right_ip: 145.245.51.2, right_port: GigabitEthernet1,
+     cost: 5, use: WAN }
+  - {left: H2, left_ip: 145.245.52.1, left_port: GigabitEthernet1,
+     right: L12, right_ip: 145.245.52.2, right_port: GigabitEthernet1,
+     cost: 5, use: WAN }
+  - {left: H1, left_ip: 145.245.51.5, left_port: GigabitEthernet2,
+     right: L21, right_ip: 145.245.51.6, right_port: GigabitEthernet1,
+     cost: 5, use: WAN }
+  - {left: H2, left_ip: 145.245.52.5, left_port: GigabitEthernet2,
+     right: L22, right_ip: 145.245.52.6, right_port: GigabitEthernet1,
+     cost: 5, use: WAN }
+
+ebgp:
+  - {left: H1, left_as: '65000', left_ip: 145.245.51.1,
+     right: L11, right_as: '65001', right_ip: 145.245.51.2}
+  - {left: H2, left_as: '65000', left_ip: 145.245.52.1,
+     right: L12, right_as: '65001', right_ip: 145.245.52.2}
+  - {left: H1, left_as: '65000', left_ip: 145.245.51.5,
+     right: L21, right_as: '65002', right_ip: 145.245.51.6}
+  - {left: H2, left_as: '65000', left_ip: 145.245.52.5,
+     right: L22, right_as: '65002', right_ip: 145.245.52.6}
+
+asn:
+  65000:
+    members: [ H1,H2 ]
+    rr:      []
+    community: 33000
+    leaf: false
+  65001:
+    members: [ L11,L12 ]
+    rr:      []
+    community: 33001
+    leaf: true
+  65002:
+    members: [ L21,L22 ]
+    rr:      []
+    community: 33002
+    leaf: true

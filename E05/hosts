@@ -1,0 +1,20 @@
+[HUB-ROUTERS]
+H1 ansible_host=10.120.4.146 
+H2 ansible_host=10.120.4.147
+
+[HUB-SWITCHES]
+
+[LEAF-ROUTERS]
+L11 ansible_host=10.120.4.148
+L12 ansible_host=10.120.4.149
+L21 ansible_host=10.120.4.150
+L22 ansible_host=10.120.4.151
+
+[LEAF-SWITCHES]
+
+[all:vars]
+ansible_user=netlab
+#ansible_connection=local
+ansible_ssh_pass=netlab
+snmp_community=cisco
+os=ios

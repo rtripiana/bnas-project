@@ -1,0 +1,62 @@
+#
+# Config bgp in a WAN fabric
+#
+---
+- name: Create & deploy generic configurations
+  hosts: all
+  connection: local
+  gather_facts: no
+  tasks:
+
+  - include: ../tests/enable-debugging.yml
+
+  - include_vars: "{{ item }}"
+    with_first_found:
+      - nodes.yml
+      - "{{ inventory_dir }}/nodes.yml"
+
+  - name: Create configurations
+    delegate_to: localhost
+    set_fact: xml_template={{ lookup( 'template','../templates/bgp_config_nc.j2' ) }}
+    changed_when: no
+    tags: [ configs ]
+
+  - block:
+
+    - delegate_to: localhost
+      set_fact: timestamp={{ lookup( 'pipe', 'date +%Y-%m-%d-%H:%M:%S' ) }}
+
+    - local_action: >
+        copy content={{ xml_template }}
+             dest={{ debug_output }}/{{ timestamp }}-{{ inventory_hostname }}-bgp.xml
+    when: debug_output is defined
+
+  - name: deploy config in the device
+    netconf_config:
+      host: "{{ ansible_host }}"
+      username: "{{ ansible_user }}"
+      password: "{{ ansible_ssh_pass }}"
+      xml: "{{ xml_template }}"
+
+  - block:
+
+    - set_fact: filter="../xml-filters/get_bgp.xml"
+
+    - delegate_to: localhost
+      set_fact: host_info="[ {{ ansible_host }}, {{ansible_nc_port}}, {{ ansible_user }}, {{ ansible_ssh_pass }}, {{ filter }} ]"
+
+    - delegate_to: localhost
+      set_fact: timestamp={{ lookup( 'pipe', 'date +%Y-%m-%d-%H:%M:%S' ) }}
+
+    - delegate_to: localhost
+      command: python ../get_config.py {{ host_info }}
+      register: result
+
+    - delegate_to: localhost
+      set_fact: result_parse={{ result.stdout | regex_replace('(\t)','  ') }}
+
+    - local_action: >
+        copy content={{ result_parse }}
+             dest={{ debug_output }}/{{ timestamp }}-{{ inventory_hostname }}-bgp-check.xml
+
+    when: debug_output is defined
