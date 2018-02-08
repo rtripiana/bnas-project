@@ -54,3 +54,18 @@ Generic configuration's template in XML format. Uses "ietf-interfaces" Yang modu
 - **bgp/bgp_config.j2**
 BGP configuration's template in XML format. Use "Cisco-IOS-XE-native" Yang module for BGP and route-map configurations
 
+## Folder E05
+Hands-on exercise for week5. Evolved version of E04 which will record the config templates to be sent including a timestamp and only if it is run in debug mode. Taht mode also triggers the configuration check that will be also saved with the same timestamp, so that both data sets can be compared. Some differences compared to E04:
+
+- **generic/deploy_gen.yml**
+BGP folder now contains a single playbook that calls the general configuration templates generations and push the config. If debug mode is activated, the template is recorded together with the pulled codig for cross-check
+- **bgp/deploy_bgp.yml**
+BGP folder now contains a single playbook that calls the BGP configuration templates generations and push the config. If debug mode is activated, the template is recorded together with the pulled codig for cross-check
+- **templates/**
+Folder that contains the Jinja2 templates
+- **tests/enable-debugging.yml**
+Playbook block to be used to setup the debug environment
+- **xml-filters/**
+Folder that contains the RPC filter in XML format to be used by the script the runs the Netconf GET
+- **get_config.py**
+Python script that runs the Netconf GET and is called from the "deploy_XXX.yml" playbooks 
