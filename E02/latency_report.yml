@@ -1,46 +1,54 @@
 ---
 
-- name: "PB Name"
+- name: "Latency report PB"
   hosts: all
   connection: local
   gather_facts: no
   vars:
   - results: results
   tasks:
-  - name: "Get list of hosts and give format"
-    set_fact:
-      hosts_list: "{{ ansible_play_batch | join(' ') }}"
-    when: hosts_list is not defined    
+
+  - name: "Get list of hosts and format"
+    local_action:
+      set_fact hosts_list="{{ ansible_play_hosts | join(' ') }}"   #is the full list of all hosts still active in the current play.
+    when: hosts_list is not defined                                #another possibility is 'ansible_play_batch'
     run_once: true
+
   - name: "Get hosts map from python script"
-    command: ./build_map.py {{ hosts_list }}
-    delegate_to: 127.0.0.1
-    register: mivar
+    local_action:
+      command python build_map.py {{ hosts_list }}          #call build_map.py to optimize removing duplicated peers
+    register: bm_result
     when: map_dict is not defined
     run_once: true
+
   - name: "Assign script's result to local dictionary var"
-    set_fact:
-      map_dict: "{{ mivar.stdout | from_json }}"
+    local_action:
+      set_fact map_dict="{{ bm_result.stdout | from_json }}"
     when: map_dict is not defined
-  - name: "Define results' folder"
-    file: path={{ results }} state=directory
     run_once: true
-  - name:
+
+  - name: "Set results' folder"
+    local_action:
+      file path="{{ results }}" state=directory
+    run_once: true
+
+  - name: "Create file per host to store results"
     file: path={{ results }}/{{ ansible_host|default(inventory_hostname) }}.txt state=touch
+
   - name: "Ping targets"
     ios_command:
-      commands: "ping {{ item }}"
-      timeout:  2
+      commands: "ping {{ item }}"                        #loop and ping each peer of the given host
       retries:  1
       wait_for:
-      - result[0] contains "!!!"
+      - result[0] contains "!!!"                         #min 3 out of 5 successful replies to consider valid
       provider: "{{ cli }}"
     with_items: "{{ map_dict[inventory_hostname] }}"
     when: map_dict[inventory_hostname]|length > 0
-    register: r
+    register: cmd_output                                 #capture ansible's output per host (in a dict)
     ignore_errors: yes
+
   - name: "Parse and save results to files"
     lineinfile:
       line:  "DST:{{ item.item }} RTT:{{ item.stdout_lines[0][3].split('round-trip')[1] }}"
       path:     "{{ results }}/{{ ansible_host|default(inventory_hostname) }}.txt"
-    with_items: "{{ r.results }}"
+    with_items: "{{ cmd_output.results }}"

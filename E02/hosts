@@ -1,7 +1,7 @@
-10.120.4.138 ansible_host=h1
-10.120.4.139 ansible_host=h1
-10.120.4.140 ansible_host=h1
-10.120.4.141 ansible_host=h1
+10.120.4.138 ansible_host=h1 ansible_host_loc=loc1
+10.120.4.139 ansible_host=h2 ansible_host_loc=loc2
+10.120.4.140 ansible_host=h3 ansible_host_loc=loc3
+10.120.4.141 ansible_host=h4 ansible_host_loc=loc4
 
 [all:vars]
 ansible_user = netlab
